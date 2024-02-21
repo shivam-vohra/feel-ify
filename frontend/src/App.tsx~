@@ -1,0 +1,20 @@
+// src/App.tsx
+import React from 'react';
+import { Container, Heading, Button } from '@chakra-ui/react';
+
+function App() {
+  return (
+    <div>
+      <Container>
+        <Heading as="h1" size="2xl" color="brand.50">
+          My Spotify App
+        </Heading>
+        <Button colorScheme="brand">Login</Button>
+      </Container>
+      {/* Add more Chakra UI components for your content */}
+    </div>
+  );
+}
+
+export default App;
+

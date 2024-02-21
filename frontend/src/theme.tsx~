@@ -1,0 +1,39 @@
+// src/theme.tsx
+import { extendTheme, ChakraTheme } from '@chakra-ui/react';
+
+const theme = extendTheme({
+  colors: {
+    brand: {
+      50: '#1DB954',   // Spotify green
+      100: '#1ED760',  // Another shade of green
+      500: '#191414',  // Spotify background color
+    },
+    text: {
+      primary: '#FFFFFF', // White text color
+      secondary: '#B3B3B3', // Light gray text color
+    },
+    button: {
+      hover: '#0D8050', // Darker green for button hover effect
+    },
+    // Add more colors as needed
+  },
+  fonts: {
+    heading: 'Montserrat, sans-serif', // Customize the heading font
+    body: 'Roboto, sans-serif', // Customize the body font
+  },
+  components: {
+    Button: {
+      variants: {
+        brand: {
+          bg: 'brand.50',
+          _hover: {
+            bg: 'button.hover',
+          },
+        },
+      },
+    },
+  },
+});
+
+export default theme;
+
