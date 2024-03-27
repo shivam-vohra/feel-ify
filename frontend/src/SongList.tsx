@@ -49,7 +49,7 @@ const SongList: React.FC<SongListProps> = ({ songs }) => {
             borderRadius="md"
           />
           <VStack align="start" spacing={0}>
-            <Text fontWeight="bold">{song.title}</Text>
+            <Text fontWeight="bold" color="gray.200">{song.title}</Text>
             <Text fontSize="sm" color="gray.400">
               {song.artist}
             </Text>

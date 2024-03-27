@@ -3,20 +3,27 @@ import React, { useState } from 'react';
 import { Container, Heading, Text, Input, Button, Flex, Spacer, Box, Image } from '@chakra-ui/react';
 import SongList, { Song } from './SongList'; // Import the SongList component
 import theme from './theme';
+import GenrePopup from './GenrePopup'; // Import the GenrePopup component
 
 function App() {
   const [userInput, setUserInput] = useState<string>('');
   const [generatedPlaylist, setGeneratedPlaylist] = useState<Song[]>([]);
+  const [isGenrePopupOpen, setIsGenrePopupOpen] = useState<boolean>(false); // State to control the popup
 
   const generatePlaylist = () => {
-    // Implement playlist generation logic based on the user input
-    // For now, let's just split the input into words and use them as playlist items
+    setIsGenrePopupOpen(true); // Open the genre selection popup
+  };
+
+  const handleGenreSelect = (genre: string) => {
+    setIsGenrePopupOpen(false); // Close the popup
+    
+    // Implement playlist generation logic based on the selected genre here...
+
+    // For demonstration, the user input is being used
     const playlistItems = userInput.split(' ').filter(Boolean);
-  
-    // Transform the array of strings into an array of Song objects
     const generatedSongs: Song[] = playlistItems.map((item, index) => ({
-      title: item,
-      artist: `Artist ${index + 1}`, // You can customize the artist name as needed
+      title: `${item} (${genre})`, // Song title includes the genre
+      artist: `Artist ${index + 1}`,
     }));
   
     setGeneratedPlaylist(generatedSongs);
@@ -35,6 +42,14 @@ function App() {
           Login
   </Button>*/}
       </Flex>
+
+      {/* GenrePopup Modal */}
+      <GenrePopup 
+        isOpen={isGenrePopupOpen}
+        onClose={() => setIsGenrePopupOpen(false)}
+        onGenreSelect={handleGenreSelect}
+      />
+
 
       {/* User Input Section */}
       <Box mb={8}>
