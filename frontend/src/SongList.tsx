@@ -1,10 +1,6 @@
 import React from 'react';
 import { Box, Text, VStack, HStack, Image } from '@chakra-ui/react';
-
-export interface Song {
-  title: string;
-  artist: string;
-}
+import { Song } from './Song'
 
 export interface SongListProps {
     songs: Song[];
@@ -42,7 +38,7 @@ const SongList: React.FC<SongListProps> = ({ songs }) => {
           _hover={{ bg: 'gray.600' }}
         >
           <Image
-            src={getRandomImage()}
+            src={song.image}
             alt={`${song.title} Album Cover`}
             boxSize="60px"
             objectFit="cover"

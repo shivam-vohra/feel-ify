@@ -1,14 +1,28 @@
 // src/App.tsx
 import React, { useState } from 'react';
 import { Container, Heading, Text, Input, Button, Flex, Spacer, Box, Image } from '@chakra-ui/react';
-import SongList, { Song } from './SongList'; // Import the SongList component
+import SongList from './SongList'; // Import the SongList component
 import theme from './theme';
 import GenrePopup from './GenrePopup'; // Import the GenrePopup component
+import { Song } from './Song'
+import SwipeableSongCard from './SwipeableSongCard';
+
+const generateRandomSongs = (numSongs: number): Song[] => {
+  const randomSongs: Song[] = [];
+  
+  for (let i = 0; i < numSongs; i++) {
+    randomSongs.push(new Song());
+  }
+
+  return randomSongs;
+};
 
 function App() {
   const [userInput, setUserInput] = useState<string>('');
   const [generatedPlaylist, setGeneratedPlaylist] = useState<Song[]>([]);
   const [isGenrePopupOpen, setIsGenrePopupOpen] = useState<boolean>(false); // State to control the popup
+  const [currentIndex, setCurrentIndex] = useState(0);
+  // const songs = 
 
   const generatePlaylist = () => {
     setIsGenrePopupOpen(true); // Open the genre selection popup
@@ -21,13 +35,43 @@ function App() {
 
     // For demonstration, the user input is being used
     const playlistItems = userInput.split(' ').filter(Boolean);
-    const generatedSongs: Song[] = playlistItems.map((item, index) => ({
-      title: `${item} (${genre})`, // Song title includes the genre
-      artist: `Artist ${index + 1}`,
-    }));
   
-    setGeneratedPlaylist(generatedSongs);
+    setGeneratedPlaylist(generateRandomSongs(10));
   };
+
+  const handleSwipe = (direction: 'left' | 'right') => {
+    // Remove the current card and set the next one
+    if (direction === "right") {
+      // Logic to add the song to the user's selection
+    }
+    // Logic to go to the next card
+    setCurrentIndex(currentIndex + 1);
+  };
+
+  let cardComponents = [];
+
+
+  let numRender = 1;
+   // Add a key to each song card that's unique to reorder the component on swipes.
+   //for (let i = currentIndex; i < generatedPlaylist.length && i<= currentIndex + 1; i++) {
+  if (generatedPlaylist.length > 0 && currentIndex < generatedPlaylist.length){
+    for (let i = currentIndex + numRender - 1; i >= 0 && i >= currentIndex; i--) {
+  
+      const isTopCard = (i === currentIndex);
+  
+      console.log(currentIndex, i, numRender - 1- i + currentIndex, isTopCard, generatedPlaylist[i].title, generatedPlaylist[i].artist)
+      // Construct the card component.
+      cardComponents[numRender - 1- i + currentIndex] =
+          <SwipeableSongCard
+              key={generatedPlaylist[i].title + generatedPlaylist[i].artist + i}
+              song={generatedPlaylist[i]}
+              onSwipe={isTopCard ? (direction) => handleSwipe(direction) : undefined}
+              topCard={isTopCard}
+          />
+      ;
+    }
+  }
+  
 
   return (
     <Container>
@@ -50,6 +94,11 @@ function App() {
         onGenreSelect={handleGenreSelect}
       />
 
+    {generatedPlaylist.length > 0 && currentIndex < generatedPlaylist.length && (
+      <Box position="relative" width="100%" height="100%">
+        {cardComponents}
+      </Box>
+      )}
 
       {/* User Input Section */}
       <Box mb={8}>
@@ -81,6 +130,7 @@ function App() {
           <Heading as="h2" size="xl" color="text.primary">
             Generated Playlist
           </Heading>
+
           <SongList songs={generatedPlaylist} />
           {/* <Flex mt={4} direction="column">
             {generatedPlaylist.map((item, index) => (
