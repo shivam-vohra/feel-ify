@@ -1,8 +1,9 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Heading, Text, Input, Button, Flex, Spacer, Box, Image } from '@chakra-ui/react';
 import SongList from './SongList'; // Import the SongList component
 import theme from './theme';
+import useSpotifyPlayer from './SpotifyPlayer'; // Import the useSpotifyPlayer hook
 import GenrePopup from './GenrePopup'; // Import the GenrePopup component
 import { Song } from './Song'
 import SwipeableSongCard from './SwipeableSongCard';
@@ -22,7 +23,25 @@ function App() {
   const [generatedPlaylist, setGeneratedPlaylist] = useState<Song[]>([]);
   const [isGenrePopupOpen, setIsGenrePopupOpen] = useState<boolean>(false); // State to control the popup
   const [currentIndex, setCurrentIndex] = useState(0);
-  // const songs = 
+  const [token, setToken] = useState<string>(''); // This will hold our access token
+  //const [startPlayback, setStartPlayback] = useState<any>(null);
+
+  // Assuming you have some way to get the access token from the code
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    if (code) {
+      console.log(code)
+      // Your logic to exchange code for token goes here
+      // For demonstration, let's say you set the token like this:
+      setToken(code); // Replace with actual token retrieval logic
+
+      
+    }
+  }, []);
+
+  const { startPlayback } = useSpotifyPlayer(token);
 
   const generatePlaylist = () => {
     setIsGenrePopupOpen(true); // Open the genre selection popup
@@ -58,6 +77,10 @@ function App() {
     for (let i = currentIndex + numRender - 1; i >= 0 && i >= currentIndex; i--) {
   
       const isTopCard = (i === currentIndex);
+
+      if (isTopCard) {
+        startPlayback(`spotify:track:42VsgItocQwOQC3XWZ8JNA`);
+      }
   
       console.log(currentIndex, i, numRender - 1- i + currentIndex, isTopCard, generatedPlaylist[i].title, generatedPlaylist[i].artist)
       // Construct the card component.
@@ -82,9 +105,6 @@ function App() {
           Feelify
         </Heading>
         <Spacer />
-        {/*<Button colorScheme="brand" variant="brand">
-          Login
-  </Button>*/}
       </Flex>
 
       {/* GenrePopup Modal */}
@@ -132,16 +152,8 @@ function App() {
           </Heading>
 
           <SongList songs={generatedPlaylist} />
-          {/* <Flex mt={4} direction="column">
-            {generatedPlaylist.map((item, index) => (
-              <Text key={index}>{item}</Text>
-            ))}
-          </Flex> */}
         </Box>
       )}
-
-      {/* Other elements and sections */}
-      {/* Customize and add more elements based on your design */}
     </Container>
   );
 }
