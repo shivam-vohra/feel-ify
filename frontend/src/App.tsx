@@ -24,22 +24,30 @@ function App() {
   const [isGenrePopupOpen, setIsGenrePopupOpen] = useState<boolean>(false); // State to control the popup
   const [currentIndex, setCurrentIndex] = useState(0);
   const [token, setToken] = useState<string>(''); // This will hold our access token
+  const isAuthenticated = !!token;
+
   //const [startPlayback, setStartPlayback] = useState<any>(null);
 
   // Assuming you have some way to get the access token from the code
   useEffect(() => {
+
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-
-    if (code) {
-      console.log(code)
-      // Your logic to exchange code for token goes here
-      // For demonstration, let's say you set the token like this:
-      setToken(code); // Replace with actual token retrieval logic
-
-      
+    const accessToken = params.get('access_token');
+    if (accessToken) {
+      setToken(accessToken);
+      // Optionally, clear the URL parameters to clean up the URL
+      window.history.pushState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  const login = () => {
+    window.location.href = 'http://localhost:8000/login';
+  };
+
+  const logout = () => {
+    // Clear the token from state or wherever it's stored
+    setToken('');
+  };
 
   const { startPlayback } = useSpotifyPlayer(token);
 
@@ -97,6 +105,7 @@ function App() {
   
 
   return (
+
     <Container>
       {/* Header */}
       <Flex align="center" mt={4} mb={8}>
@@ -106,6 +115,11 @@ function App() {
         </Heading>
         <Spacer />
       </Flex>
+
+      {!isAuthenticated ? (
+        <Button onClick={login}>Login with Spotify</Button>
+      ) : (
+        <div>
 
       {/* GenrePopup Modal */}
       <GenrePopup 
@@ -144,6 +158,11 @@ function App() {
         </Flex>
       </Box>
 
+      {/* Logout Button */}
+      <Box my={4}>
+        <Button colorScheme="red" onClick={logout}>Logout</Button>
+      </Box>
+
       {/* Generated Playlist Section */}
       {generatedPlaylist.length > 0 && (
         <Box>
@@ -153,6 +172,10 @@ function App() {
 
           <SongList songs={generatedPlaylist} />
         </Box>
+      )}
+
+                {/* Your existing UI components go here, e.g., GenrePopup, SongList, etc. */}
+                </div>
       )}
     </Container>
   );
