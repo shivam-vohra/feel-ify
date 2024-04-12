@@ -5,7 +5,7 @@ const app = express();
 const client_id = '4684b510b3ab4faaa121c2ac74b209fe';//'3ebaced21096427090115826ab5a94e5'; // Insert your client ID here
 const client_secret = '9b132b735e264aa08a78d2f2049f48eb';//'38e9784f35984a359ae2b901543d92b4'; // Insert your client secret here
 const redirect_uri = 'http://localhost:8000/callback'; // Your redirect URI
-const scopes = 'streaming user-read-email user-read-private user-modify-playback-state'; // Include necessary scopes
+const scopes = 'streaming user-read-email user-read-private user-modify-playback-state playlist-modify-public playlist-modify-private'; // Include necessary scopes
 
 app.get('/login', (req, res) => {
   const auth_query_parameters = new URLSearchParams({

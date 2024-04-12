@@ -4,13 +4,12 @@ export class Song {
     artist: string;
     image: string;
     trackId: string;
-  
-    constructor(title?: string, artist?: string, image?: string, trackId?: string) {
+    constructor(track?: string, artist?: string, image_url?: string, spotify_id?: string) {
         console.log("Song created")
-      this.title = title || this.getRandomTitle();
+      this.title = track || this.getRandomTitle();
       this.artist = artist || this.getRandomArtist();
-      this.image = image || this.getRandomImage();
-      this.trackId = trackId || '42VsgItocQwOQC3XWZ8JNA';
+      this.image = image_url || this.getRandomImage();
+      this.trackId = spotify_id || '42VsgItocQwOQC3XWZ8JNA';
     }
   
     private getRandomTitle(): string {

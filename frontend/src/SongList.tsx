@@ -4,27 +4,10 @@ import { Song } from './Song'
 
 export interface SongListProps {
     songs: Song[];
+    onSongClick: (songId: string) => void;
   }
 
-const SongList: React.FC<SongListProps> = ({ songs }) => {
-//   const songs: Song[] = [
-//     {
-//       title: 'Song 1',
-//       artist: 'Artist 1',
-//     },
-//     {
-//       title: 'Song 2',
-//       artist: 'Artist 2',
-//     },
-//     // Add more songs as needed
-//   ];
-
-  const getRandomImage = () => {
-    const imageId = Math.floor(Math.random() * 1000) + 1;
-    return `https://picsum.photos/seed/${imageId}/100/100`;
-  };
-
-  console.log("trying")
+const SongList: React.FC<SongListProps> = ({ songs, onSongClick }) => {
 
   return (
     <VStack spacing={4} align="stretch">
@@ -35,6 +18,8 @@ const SongList: React.FC<SongListProps> = ({ songs }) => {
           bg="gray.700"
           borderRadius="md"
           spacing={4}
+          onClick={() => onSongClick(song.trackId)}
+          cursor="pointer"
           _hover={{ bg: 'gray.600' }}
         >
           <Image

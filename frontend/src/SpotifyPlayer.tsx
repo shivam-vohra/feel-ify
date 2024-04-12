@@ -97,7 +97,34 @@ const useSpotifyPlayer = (token: string) => {
     }).catch(err => console.error("Error starting playback", err));
   };
 
-  return { startPlayback };
+  // Function to stop playback
+  const stopPlayback = () => {
+    console.log("Attempting to stop playback");
+    if (!window.device) {
+      console.error('No device ID available for playback stop');
+      return;
+    }
+
+    window.Spotify.Player.prototype.getOAuthToken = (cb: (token: string) => void) => {
+      cb(token);
+    };
+
+    fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${window.device}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    }).then(response => {
+      if (response.ok) {
+        console.log("Playback stopped");
+      } else {
+        console.error("Failed to stop playback", response);
+      }
+    }).catch(err => console.error("Error stopping playback", err));
+  };
+
+  return { startPlayback, stopPlayback };
 };
 
 export default useSpotifyPlayer;
