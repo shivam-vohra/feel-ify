@@ -86,8 +86,8 @@ const SwipeableSongCard = ({ song, onSwipe, topCard }: SwipeableSongCardProps) =
             alignItems="center"
           >
             <Box>
-              <Text fontSize="xl" fontWeight="bold">{song.title}</Text>
-              <Text fontSize="md">{song.artist}</Text>
+              <Text fontSize="xl" fontWeight="bold" color="black">{song.title}</Text>
+              <Text fontSize="md" color="black">{song.artist}</Text>
             </Box>
 
             {/* Buttons */}
@@ -96,11 +96,13 @@ const SwipeableSongCard = ({ song, onSwipe, topCard }: SwipeableSongCardProps) =
                 icon={<ArrowBackIcon />}
                 aria-label="Swipe left"
                 onClick={() => handleSwipe('left')}
+                colorScheme="black"
               />
               <IconButton
                 icon={<ArrowForwardIcon />}
                 aria-label="Swipe right"
                 onClick={() => handleSwipe('right')}
+                colorScheme="black"
               />
             </ButtonGroup>
           </Flex>

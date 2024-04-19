@@ -100,15 +100,34 @@ function App() {
     }
   };
 
+  const createPlaylistWithImage = async (userInput: string, accessToken: string, playlistId: string) => {
+
+    try {
+      const response = await axios.post('http://localhost:8000/create-playlist-with-image', {
+        prompt: userInput,
+        accessToken: accessToken,
+        playlistId: playlistId
+      });
+  
+      if (response.data.success) {
+        console.log('Playlist created successfully, ID:', response.data.playlistId);
+      } else {
+        console.error('Failed to create playlist:', response.data.message);
+      }
+    } catch (error: any) {
+      console.error('Error creating playlist with image:', error.message);
+    }
+  };
+
   const createPlaylist = async (songs: Song[]) => {
     setIsLoading(true); // Indicate loading
   
     try {
       // Step 1: Create a new playlist
       const playlistResponse = await axios.post(`https://api.spotify.com/v1/users/${userId}/playlists`, JSON.stringify({
-        name: "Generated Playlist", // Name of the new playlist
-        description: "New playlist created by Feelify", // Optional description
-        public: false // Set to true if you want the playlist public
+        name: userInput,
+        description: "My fire new playlist created by Feelify :)",
+        public: false
       }), {
         headers: {
           'Content-Type': 'application/json',
@@ -130,13 +149,15 @@ function App() {
       });
   
       console.log("Playlist created and tracks added!");
-    } catch (error) {
-      console.error("Error creating playlist:", error);
-    } finally {
-      setIsLoading(false);
-    }
+      // Step 3: Generate and upload a cover image
+      await createPlaylistWithImage(userInput!, token!, playlist.id);
+      console.log("Playlist created, tracks added, and cover image set!");
+  } catch (error) {
+    console.error("Error in playlist creation process:", error);
+  } finally {
+    setIsLoading(false);
+  }
   };
-  
   
 
   const generatePlaylist = async () => {
@@ -147,11 +168,7 @@ function App() {
     setIsPlaylistLoaded(false);
     setIsLoading(true);
     stopPlayback();
-    // setIsGenrePopupOpen(true); // Open the genre selection popup
-    // Implement playlist generation logic based on the selected genre here...
 
-    // For demonstration, the user input is being used
-    // const playlistItems = userInput.split(' ').filter(Boolean);
     try {
       const response = await axios.get('http://localhost:8080/get-seeds', {
         params: { input: userInput }
@@ -163,19 +180,16 @@ function App() {
       }
     } catch (error) {
       console.error('Error fetching songs:', error);
-      // Handle errors here, e.g., show a message to the user
     } finally {
       setIsLoading(false);  // End loading regardless of success or failure
     }
   
   };
 
+  // No longer used
   const handleGenreSelect = async (genre: string) => {
     setIsGenrePopupOpen(false); // Close the popup
-    
-    // Implement playlist generation logic based on the selected genre here...
 
-    // For demonstration, the user input is being used
     try {
       const response = await axios.get('http://localhost:8080/get-seeds', {
         params: { input: userInput }
@@ -183,7 +197,6 @@ function App() {
       if (response.data) {
         const playlist = response.data.map((song: any) => new Song(song.track, song.artist, song.image_url, song.spotify_id));
         setGeneratedPlaylist(playlist);
-        console.log("BAAAANG")
       }
     } catch (error) {
       console.error('Error fetching songs:', error);
@@ -203,6 +216,7 @@ function App() {
     setCurrentIndex(newIndex);
     console.log("CURRENT: " + newIndex + " GEN LEN: " + generatedPlaylist.length);
       // Check if the new current index equals the length of the playlist
+      // This means we're at the last card
     if (newIndex === generatedPlaylist.length) {
       console.log("Last song swiped. Fetching new recommendations...");
       fetchRecommendations();
@@ -215,14 +229,13 @@ function App() {
 
   let numRender = 1;
    // Add a key to each song card that's unique to reorder the component on swipes.
-   //for (let i = currentIndex; i < generatedPlaylist.length && i<= currentIndex + 1; i++) {
   if (generatedPlaylist.length > 0 && currentIndex < generatedPlaylist.length){
     for (let i = currentIndex + numRender - 1; i >= 0 && i >= currentIndex; i--) {
   
       const isTopCard = (i === currentIndex);
 
       if (isTopCard) {
-        startPlayback(`spotify:track:` + generatedPlaylist[i].trackId); // 42VsgItocQwOQC3XWZ8JNA
+        startPlayback(`spotify:track:` + generatedPlaylist[i].trackId); // 42VsgItocQwOQC3XWZ8JNA is FEIN
       }
   
       console.log(currentIndex, i, numRender - 1- i + currentIndex, isTopCard, generatedPlaylist[i].title, generatedPlaylist[i].artist)
@@ -246,19 +259,18 @@ const fetchRecommendations = async () => {
       params: {
         seed_ids: selectedTrackIds.join(','), // Assuming selectedTrackIds is an array of Spotify IDs
         disliked_ids: dislikedTrackIds.join(','),
-        input: userInput // Assuming there is some user input you want to use for recommendation
+        input: userInput
       }
     });
     if (response.data) {
       const playlist = response.data.map((song: any) => new Song(song.track, song.artist, song.image_url, song.spotify_id));
       setGeneratedPlaylist(playlist);
-      setCurrentIndex(playlist.length); // Reset the index for the new playlist
+      setCurrentIndex(playlist.length);
       setIsPlaylistLoaded(true);
       console.log("New playlist loaded successfully.");
     }
   } catch (error) {
     console.error('Failed to fetch recommendations:', error);
-    // Handle error here, e.g., showing an error message to the user
   } finally {
     setIsLoading(false);  // End loading regardless of success or failure
   }
@@ -336,7 +348,7 @@ const fetchRecommendations = async () => {
       )
     )}
 
-      {/* Generated Playlist Section
+      {/* OLD - Generated Playlist Section
       {isPlaylistLoaded && generatedPlaylist.length > 0 && (
         <Box>
           <Heading as="h2" size="xl" color="text.primary">
